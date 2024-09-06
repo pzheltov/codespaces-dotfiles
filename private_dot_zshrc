@@ -35,13 +35,6 @@ zstyle ':z4h:direnv' enable 'no'
 # Show "loading" and "unloading" notifications from direnv.
 zstyle ':z4h:direnv:success' notify 'yes'
 
-# Enable ('yes') or disable ('no') automatic teleportation of z4h over
-# SSH when connecting to these hosts.
-zstyle ':z4h:ssh:pavel-desktop' enable 'yes'
-zstyle ':z4h:ssh:gz' enable 'no'
-zstyle ':z4h:ssh:gz-*' enable 'yes'
-zstyle ':z4h:ssh:officegz-*' enable 'yes'
-zstyle ':z4h:ssh:bigo*' enable 'yes'
 # The default value if none of the overrides above match the hostname.
 zstyle ':z4h:ssh:*' enable 'no'
 
@@ -85,12 +78,10 @@ z4h load ohmyzsh/ohmyzsh/plugins/gradle-completion
 #z4h load ohmyzsh/ohmyzsh/plugins/httpie
 z4h load ohmyzsh/ohmyzsh/plugins/macos
 z4h load ohmyzsh/ohmyzsh/plugins/rsync
-z4h load ohmyzsh/ohmyzsh/plugins/ssh-agent
 z4h load ohmyzsh/ohmyzsh/plugins/jenv
 z4h load zsh-users/zsh-completions 
 
 plugins+=(gradle-completion iterm-tab-color)
-# plugins=(git gitfast macos gradle history history-substring-search brew docker common-aliases ssh-agent rsync tmux colorize dircycle golang httpie zsh-navigation-tools adb zsh-syntax-highlighting pod evalcache zsh-ssh)
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 
