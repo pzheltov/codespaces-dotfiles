@@ -1,0 +1,124 @@
+#!/usr/bin/zsh
+#shellcheck shell=bash
+# Personal Zsh configuration file. It is strongly recommended to keep all
+# shell customization and configuration (including exported environment
+# variables such as PATH) in this file or in files sourced from it.
+#
+# Documentation: https://github.com/romkatv/zsh4humans/blob/v5/README.md.
+
+# Periodic auto-update on Zsh startup: 'ask' or 'no'.
+# You can manually run `z4h update` to update everything.
+zstyle ':z4h:' auto-update 'no'
+# Ask whether to auto-update this often; has no effect if auto-update is 'no'.
+zstyle ':z4h:' auto-update-days '28'
+
+# Keyboard type: 'mac' or 'pc'.
+zstyle ':z4h:bindkey' keyboard 'mac'
+
+# Don't start tmux.
+zstyle ':z4h:' start-tmux no
+
+# Mark up shell's output with semantic information.
+zstyle ':z4h:' term-shell-integration 'yes'
+
+# Right-arrow key accepts one character ('partial-accept') from
+# command autosuggestions or the whole thing ('accept')?
+zstyle ':z4h:autosuggestions' forward-char 'accept'
+zstyle ':z4h:autosuggestions' end-of-line partial-accept
+
+# Recursively traverse directories when TAB-completing files.
+zstyle ':z4h:fzf-complete' recurse-dirs 'yes'
+zstyle ':z4h:fzf-complete' fzf-bindings tab:repeat
+
+# Enable direnv to automatically source .envrc files.
+zstyle ':z4h:direnv' enable 'no'
+# Show "loading" and "unloading" notifications from direnv.
+zstyle ':z4h:direnv:success' notify 'yes'
+
+# Enable ('yes') or disable ('no') automatic teleportation of z4h over
+# SSH when connecting to these hosts.
+zstyle ':z4h:ssh:pavel-desktop' enable 'yes'
+zstyle ':z4h:ssh:gz' enable 'no'
+zstyle ':z4h:ssh:gz-*' enable 'yes'
+zstyle ':z4h:ssh:officegz-*' enable 'yes'
+zstyle ':z4h:ssh:bigo*' enable 'yes'
+# The default value if none of the overrides above match the hostname.
+zstyle ':z4h:ssh:*' enable 'no'
+
+# Improve completions for ssh and similar commands:
+zstyle ':completion:*:ssh:argument-1:'       tag-order  hosts users
+zstyle ':completion:*:scp:argument-rest:'    tag-order  hosts files users
+zstyle ':completion:*:(ssh|scp|rdp|rsync):*:hosts' hosts
+
+# Clone additional Git repositories from GitHub.
+#
+# This doesn't do anything apart from cloning the repository and keeping it
+# up-to-date. Cloned files can be used after `z4h init`. This is just an
+# example. If you don't plan to use Oh My Zsh, delete this line.
+z4h install ohmyzsh/ohmyzsh || return
+
+# Install or update core components (fzf, zsh-autosuggestions, etc.) and
+# initialize Zsh. After this point console I/O is unavailable until Zsh
+# is fully initialized. Everything that requires user interaction or can
+# perform network I/O must be done above. Everything else is best done below.
+z4h init || return
+
+# Extend PATH.
+path=(~/bin $path "$GOPATH/bin")
+
+# Export environment variables.
+export GPG_TTY=$TTY
+
+# Use additional Git repositories pulled in with `z4h install`.
+#z4h load ohmyzsh/ohmyzsh/plugins/docker
+#z4h load ohmyzsh/ohmyzsh/plugins/golang
+#z4h load ohmyzsh/ohmyzsh/plugins/httpie
+z4h install olets/zsh-abbr || return
+z4h install bernardop/iterm-tab-color-oh-my-zsh || return
+z4h load ohmyzsh/ohmyzsh/plugins/adb
+z4h load ohmyzsh/ohmyzsh/plugins/brew
+z4h load ohmyzsh/ohmyzsh/plugins/git
+#z4h load ohmyzsh/ohmyzsh/plugins/golang
+#z4h load ohmyzsh/ohmyzsh/plugins/gradle
+#z4h install gradle/gradle-completion
+z4h load ohmyzsh/ohmyzsh/plugins/gradle-completion
+#z4h load ohmyzsh/ohmyzsh/plugins/httpie
+z4h load ohmyzsh/ohmyzsh/plugins/macos
+z4h load ohmyzsh/ohmyzsh/plugins/rsync
+z4h load ohmyzsh/ohmyzsh/plugins/ssh-agent
+z4h load ohmyzsh/ohmyzsh/plugins/jenv
+z4h load zsh-users/zsh-completions 
+
+plugins+=(gradle-completion iterm-tab-color)
+# plugins=(git gitfast macos gradle history history-substring-search brew docker common-aliases ssh-agent rsync tmux colorize dircycle golang httpie zsh-navigation-tools adb zsh-syntax-highlighting pod evalcache zsh-ssh)
+
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+
+# Source additional local files if they exist.
+z4h source ~/.common_aliases.sh
+
+
+# Define key bindings.
+z4h bindkey undo Ctrl+/ Shift+Tab # undo the last command line change
+z4h bindkey redo Option+/         # redo the last undone command line change
+z4h bindkey z4h-cd-back Shift+Left     # cd into the previous directory
+z4h bindkey z4h-cd-forward Shift+Right # cd into the next directory
+z4h bindkey z4h-cd-up Shift+Up         # cd into the parent directory
+z4h bindkey z4h-cd-down Shift+Down     # cd into a child directory
+
+# Autoload functions.
+autoload -Uz zmv
+
+# Define functions and completions.
+function md() {
+	[[ $# == 1 ]] && mkdir -p -- "$1" && { cd -- "$1" || return 3; }
+}
+compdef _directories md
+
+# Set shell options: http://zsh.sourceforge.net/Doc/Release/Options.html.
+setopt glob_dots    # no special treatment for file names with a leading dot
+setopt no_auto_menu # require an extra TAB press to open the completion menu
+
+export COLUMNS="120"
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"

@@ -1,6 +1,6 @@
 # dotfiles
 
-Template dotfiles repository, managed with [chezmoi](https://chezmoi.io/).
+A minimal dotfiles repository, managed with [chezmoi](https://chezmoi.io/).
 
 ## License
 

@@ -1,8 +1,7 @@
 {{- /* Checks if running interactively, which is not the case for GitHub Codespaces */ -}}
 {{- $interactive := stdinIsATTY -}}
 
-{{- /* Initializes the name variable with a default value */ -}}
-{{- $name := "Your Name" -}}
+{{- $name := "Pavel Zheltov" -}}
 {{- /* If name was previously set, reuses it */ -}}
 {{- if hasKey . "name" -}}
 {{-   $name = .name -}}
@@ -11,8 +10,7 @@
 {{-   $name = promptString "name" $name -}}
 {{- end -}}
 
-{{- /* Does the same for the email */ -}}
-{{- $email := "your@email.com" -}}
+{{- $email := "pzheltov@gmail.com" -}}
 {{- if hasKey . "email" -}}
 {{-   $email = .email -}}
 {{- else if $interactive -}}

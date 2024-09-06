@@ -1,0 +1,178 @@
+set nocompatible              " required
+filetype off                  " required
+set encoding=utf-8
+let python_highlight_all=1
+syntax on
+set nu	" line numbers
+imap jj <Esc>
+syntax enable
+set wildmenu
+set scrolloff=10
+
+" Automatic installation if Vim-Plug
+" https://github.com/junegunn/vim-plug/wiki/tips#automatic-installation
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" vim plugin
+call plug#begin()
+" The default plugin directory will be as follows:
+"   - Vim (Linux/macOS): '~/.vim/plugged'
+"   - Vim (Windows): '~/vimfiles/plugged'
+"   - Neovim (Linux/macOS/Windows): stdpath('data') . '/plugged'
+" You can specify a custom plugin directory by passing it as the argument
+"   - e.g. `call plug#begin('~/.vim/plugged')`
+"   - Avoid using standard Vim directory names like 'plugin'
+" Make sure you use single quotes
+
+" Shorthand notation; fetches https://github.com/junegunn/vim-easy-align
+Plug 'junegunn/vim-easy-align'
+Plug 'vim-scripts/indentpython.vim', { 'for': 'python' }
+Plug 'preservim/nerdcommenter'
+"Plugin 'vim-syntastic/syntastic'
+Plug 'nvie/vim-flake8', { 'for': 'python' }
+Plug 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'tpope/vim-fugitive'
+Plug 'dylon/vim-antlr'
+Plug 'sheerun/vim-polyglot'
+Plug 'itspriddle/vim-shellcheck'
+Plug 'tmux-plugins/vim-tmux'
+Plug 'tmux-plugins/vim-tmux-focus-events'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'cespare/vim-toml'
+" Plugin outside ~/.vim/plugged with post-update hook
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'ekalinin/Dockerfile.vim'
+Plug 'vim-scripts/AnsiEsc.vim'
+Plug 'bogado/file-line'
+Plug 'Neui/cmakecache-syntax.vim'
+Plug 'pboettch/vim-cmake-syntax'
+Plug 'qnighy/vim-ssh-annex'
+Plug 'ARM9/arm-syntax-vim'
+"Plug 'nanotee/zoxide.vim'
+" Initialize plugin system
+call plug#end()
+
+filetype plugin indent on    " required
+
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+"
+" see :h vundle for more details or wiki for FAQ
+" ----------------------------------------------
+
+"split navigations
+set splitbelow
+set splitright
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" Enable folding
+"set foldmethod=indent
+"set foldlevel=99
+" Enable folding with the spacebar
+"nnoremap <space> za
+
+" PEP8 indentation
+au BufNewFile,BufRead *.py
+    \ set tabstop=4 |
+    \ set softtabstop=4 |
+    \ set shiftwidth=4 |
+    \ set textwidth=79 |
+    \ set expandtab |
+    \ set autoindent |
+    \ set fileformat=unix
+
+" configuration for Valloric/YouCompleteMe
+" let g:ycm_autoclose_preview_window_after_completion=1
+" map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+set ruler
+set rulerformat=%55(%{strftime('%a\ %b\ %e\ %H:%M:%S')}\ %5l,%-6(%c%V%)\ %P%)
+
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set number
+set hlsearch
+set incsearch
+set noswapfile
+set smartcase
+set ignorecase
+" #set clipboard=exclude:.*
+set clipboard^=unnamed,unnamedplus
+set backspace=indent,eol,start
+
+" add recognition of other zipped extensions
+au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
+au BufReadCmd *.jar,*.xpi,*.par call zip#Browse(expand("<amatch>"))
+au BufReadCmd *.aar,*.apk call zip#Browse(expand("<amatch>"))
+"au BufReadCmd *.conf setf dosini
+au BufRead,BufNewFile *.txr set filetype=txr | set lisp
+au BufRead,BufNewFile *.tl,*.tlo set filetype=tl | set lisp
+au BufRead,BufNewFile *.pc set filetype=bash
+au BufRead,BufNewFile *.g set filetype=antlr3
+au BufRead,BufNewFile *.g4 set filetype=antlr4
+au BufNewFile,BufRead *.gradle setf groovy
+au BufNewFile,BufRead CMakeCache.txt setf cmakec
+au BufNewFile,BufRead CMakeLists.txt setf cmake
+au BufNewFile,BufRead *.s,*.S set filetype=arm " arm = armv6/7
+autocmd BufNewFile,BufRead Dockerfile*,*.dockerfile set syntax=dockerfile
+
+
+"if executable('ag')
+"  :echom "AG FOUND"
+"endif
+
+" Press Space to turn off highlighting and clear any message already displayed.
+nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
+" F11 should now toggle the literal paste-mode on/off
+map <F11> :set invpaste<CR>
+map <F10> :set paste<CR>
+map <F11> :set nopaste<CR>
+imap <F10> <C-O>:set paste<CR>
+imap <F11> <nop>
+set pastetoggle=<F11>
+
+" Allow saving of files as sudo when I forgot to start vim using sudo.
+cmap w!! w !sudo tee > /dev/null %
+"cnoremap w!! execute 'silent! write !SUDO_ASKPASS=`which ssh-askpass` sudo tee % >/dev/null' <bar> edit!
+
+
+" set cursor to bar
+" " Change cursor shape between insert and normal mode in iTerm2.app
+if $TERM_PROGRAM =~ "iTerm"
+    let &t_SI = "\<Esc>]50;CursorShape=1\x7" " Vertical bar in insert mode
+    let &t_EI = "\<Esc>]50;CursorShape=0\x7" " Block in normal mode
+    "NVIM_TUI_ENABLE_CURSOR_SHAPE=1 " works in neovim
+endif
+
+" Powerline on
+" Always show statusline
+set laststatus=2
+" let g:Powerline_symbols = 'fancy'
+" set fillchars+=stl:\ ,stlnc:\
+" set term=xterm-256color
+" set termencoding=utf-8
+
+" Use 256 colours (Use this setting only if your terminal supports 256 colours)
+set t_Co=256
+
+" background color management
+let iterm_profile = $ITERM_PROFILE
+if iterm_profile == "Dark"
+    set background=dark
+else
+    set background=light        " Set solarized background color
+endif
+
+command W :execute ':silent w !sudo tee % > /dev/null' | :edit!
