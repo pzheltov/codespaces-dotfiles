@@ -113,5 +113,3 @@ setopt no_auto_menu # require an extra TAB press to open the completion menu
 export COLUMNS="120"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
